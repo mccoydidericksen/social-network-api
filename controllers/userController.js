@@ -26,14 +26,22 @@ module.exports = {
       .then((user) => res.json(user))
       .catch((err) => res.status(500).json(err));
   },
-  // delete a user
+  // delete a user and their thoughts
   deleteUser(req, res) {
-    User.findOneAndDelete({ _id: Types.ObjectId(req.params.id) })
-      .then((user) =>
-        !user
-          ? res.status(404).json({ message: 'No user with that ID' })
-          : res.json({ message: 'User deleted!' })
-      )
+    User.findOne({ _id: Types.ObjectId(req.params.id) })
+      .then((user) => {
+        if (!user) {
+          return res.status(404).json({ message: 'No user with that ID' });
+        }
+        user.thoughts.forEach((thought) => {
+          Thought.findOneAndDelete({ _id: Types.ObjectId(thought) }).then(() =>
+            console.log('Thought deleted')
+          );
+        });
+        User.findOneAndDelete({ _id: Types.ObjectId(req.params.id) }).then(() =>
+          res.json({ message: 'User and user thoughts deleted' })
+        );
+      })
       .catch((err) => res.status(500).json(err));
   },
   // update a user
