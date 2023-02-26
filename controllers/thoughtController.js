@@ -60,7 +60,6 @@ module.exports = {
         if (!thought) {
           return res.status(404).json({ message: 'No thought with that ID' });
         }
-        console.log(thought);
         User.findOneAndUpdate(
           { username: thought.username },
           { $pull: { thoughts: thought._id } },
@@ -68,7 +67,7 @@ module.exports = {
         )
           .then((user) => {
             if (!user) {
-              return res.status(404).json({ message: 'No user with that ID' });
+              return res.status(404).json({ message: 'No user with that thought.. thought removed!' });
             }
             return res.json({ message: 'Thought removed' });
           })

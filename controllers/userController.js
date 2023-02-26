@@ -1,4 +1,4 @@
-const { User } = require('../models');
+const { User, Thought } = require('../models');
 const { Types } = require('mongoose');
 
 module.exports = {
@@ -33,14 +33,12 @@ module.exports = {
         if (!user) {
           return res.status(404).json({ message: 'No user with that ID' });
         }
-        user.thoughts.forEach((thought) => {
-          Thought.findOneAndDelete({ _id: Types.ObjectId(thought) }).then(() =>
-            console.log('Thought deleted')
+        // delete all thoughts associated with the user
+        Thought.deleteMany({ _id: { $in: user.thoughts } }).then((thought) => {
+          User.findOneAndDelete({ _id: Types.ObjectId(req.params.id) }).then(
+            () => res.json({ message: 'User and user thoughts deleted' })
           );
         });
-        User.findOneAndDelete({ _id: Types.ObjectId(req.params.id) }).then(() =>
-          res.json({ message: 'User and user thoughts deleted' })
-        );
       })
       .catch((err) => res.status(500).json(err));
   },
