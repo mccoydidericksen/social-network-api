@@ -33,7 +33,7 @@ module.exports = {
             if (!user) {
               return res.status(404).json({ message: 'No user with that ID' });
             }
-            return res.json(user);
+            return res.json(thought);
           })
           .catch((err) => res.status(500).json(err));
       })
@@ -60,8 +60,9 @@ module.exports = {
         if (!thought) {
           return res.status(404).json({ message: 'No thought with that ID' });
         }
+        console.log(thought);
         User.findOneAndUpdate(
-          { _id: Types.ObjectId(thought.userId) },
+          { username: thought.username },
           { $pull: { thoughts: thought._id } },
           { new: true }
         )
@@ -69,7 +70,7 @@ module.exports = {
             if (!user) {
               return res.status(404).json({ message: 'No user with that ID' });
             }
-            return res.json(user);
+            return res.json({ message: 'Thought removed' });
           })
           .catch((err) => res.status(500).json(err));
       })
@@ -102,7 +103,7 @@ module.exports = {
         if (!thought) {
           return res.status(404).json({ message: 'No thought with that ID' });
         }
-        return res.json(thought);
+        return res.json({ message: 'Reaction removed' });
       })
       .catch((err) => res.status(500).json(err));
   },
